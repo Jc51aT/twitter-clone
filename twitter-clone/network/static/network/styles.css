@@ -2,5 +2,23 @@
     font: 20px bold Arial, sans-serif;
 }
 .post{
-    border: 2px;
+    border: 2px solid lightgrey;
+}
+#postings{
+    border: 2px solid lightgray;
+    margin: 2em;
+    padding: 2em;
+}
+#newPostForm{
+    border: 2px solid lightgray;
+    margin: 2em;
+    padding: 2em;
+    position:relative;
+}
+
+#newPostForm > .btn {
+    position:   absolute;
+    right:      0;
+    bottom:     0;
+    margin:    0.5em;
 }

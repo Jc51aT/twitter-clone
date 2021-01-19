@@ -3,7 +3,7 @@
 {% block body %}
     {% if user.is_authenticated %}
     
-        <form action="" method="post">
+        <form action="" method="post" id="newPostForm">
             {% csrf_token %}
             <div class="form-group">
                 <label>New Post</label>
@@ -15,6 +15,7 @@
     
     {% endif %}
 
+    {% if Posts %}
         <div id="postings">
             {% for post in Posts %}
                 <div class="post">
@@ -38,6 +39,7 @@
                 </div>
             {% endfor %}
         </div>
+    {% endif %}
 
 
 
