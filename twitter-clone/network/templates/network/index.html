@@ -1,0 +1,44 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    {% if user.is_authenticated %}
+    
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>New Post</label>
+                <input type="textarea" class="form-control" id="newPostInput" aria-describedby="newPostInput" placeholder="Enter New Post" name="post-text">
+            </div>
+            <button type="submit" class="btn btn-primary">Post</button>
+        </form>
+        
+    
+    {% endif %}
+
+        <div id="postings">
+            {% for post in Posts %}
+                <div class="post">
+                    <div class="postText">
+                        {{ post.text }}
+                    </div>
+                    {% if user == post.author %}
+                        <div class="postEdit">
+                            Edit
+                        </div>
+                    {% endif %}
+                    <div class="postAuthor">
+                        {{ post.author }}
+                    </div>
+                    <div class="postDate">
+                        {{ post.date_time }}
+                    </div>
+                    <div class="postLikes">
+                       {{ post.likes }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+
+{% endblock %}
