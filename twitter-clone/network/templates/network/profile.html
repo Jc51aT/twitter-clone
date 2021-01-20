@@ -2,12 +2,35 @@
 
 {% block body %}
     {% if user.is_authenticated %}
-    
-        <h2>{{  user.username  }}</h2>
-
+        <div>
+            <h2>{{  user.username  }}</h2>  <button></button>
+        </div>
         <div>
             Followers: {{ num_followers }}  Following: {{ num_following }}
         </div>
+
+
+        {% if user_posts %}
+            <div id="postings">
+                {% for post in user_posts %}
+                    <div class="post">
+                        <div class="postText">
+                            {{ post.text }}
+                        </div>
+                        <div class="postEdit">
+                            <button>Edit</button>
+                        </div>
+                        <div class="postDate">
+                            {{ post.date_time }}
+                        </div>
+                        <div class="postLikes">
+                        {{ post.num_likes }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
     {% endif %}
 
 

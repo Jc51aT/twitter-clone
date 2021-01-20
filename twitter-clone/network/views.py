@@ -30,10 +30,12 @@ def profile(request):
 
     num_following = len(User_Following.objects.filter(user_id = request.user.id))
     num_followers = len( User_Following.objects.filter(following_user_id= request.user.id))
+    user_posts    = Post.objects.filter(author= request.user)
 
     return render(request, "network/profile.html", {
         "num_following": num_following,
         "num_followers": num_followers,
+        "user_posts"   : user_posts,
     })
 
 
