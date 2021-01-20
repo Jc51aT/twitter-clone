@@ -3,7 +3,11 @@
 {% block body %}
     {% if user.is_authenticated %}
     
-        <h1>STUFF</h1>
+        <h2>{{  user.username  }}</h2>
+
+        <div>
+            Followers: {{ num_followers }}  Following: {{ num_following }}
+        </div>
     {% endif %}
 
 

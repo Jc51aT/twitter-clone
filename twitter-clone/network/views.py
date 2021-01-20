@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils import timezone,dateformat
 from django.contrib.auth.decorators import login_required
 
-from .models import User, Post, Post_Likes
+from .models import User, Post, Post_Likes, User_Following
 
   
 def index(request):
@@ -27,8 +27,13 @@ def index(request):
 
 @login_required
 def profile(request):
+
+    num_following = len(User_Following.objects.filter(user_id = request.user.id))
+    num_followers = len( User_Following.objects.filter(following_user_id= request.user.id))
+
     return render(request, "network/profile.html", {
-        "User": User.objects.get(id=request.user.id),
+        "num_following": num_following,
+        "num_followers": num_followers,
     })
 
 
