@@ -3,6 +3,8 @@
 }
 .post{
     border: 2px solid lightgrey;
+    padding: 1em;
+    margin-top: 1em;
 }
 #postings{
     border: 2px solid lightgray;
