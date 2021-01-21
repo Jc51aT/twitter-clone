@@ -3,7 +3,7 @@
 {% block body %}
     {% if user.is_authenticated %}
         <div>
-            <h2>{{  user.username  }}</h2>  <button></button>
+            <h2>{{  user.username  }}</h2> &nbws <button type="button" class="btn btn-primary">Follow</button>
         </div>
         <div>
             Followers: {{ num_followers }}  Following: {{ num_following }}
@@ -12,13 +12,14 @@
 
         {% if user_posts %}
             <div id="postings">
+                <h3>{{ user.username }}'s Posts</h3>
                 {% for post in user_posts %}
                     <div class="post">
                         <div class="postText">
                             {{ post.text }}
                         </div>
                         <div class="postEdit">
-                            <button>Edit</button>
+                            <button type="button" class="btn btn-primary editPostBtn">Edit</button>
                         </div>
                         <div class="postDate">
                             {{ post.date_time }}

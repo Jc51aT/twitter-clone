@@ -1,0 +1,40 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+
+    {% if user.is_authenticated %}
+
+        {% if Posts %}
+            <div id="postings">
+                {% for post in Posts %}
+                    <div class="post">
+                        <div class="postText">
+                            {{ post.text }}
+                        </div>
+                        {% if user == post.author %}
+                            <div class="postEdit">
+                                <button type="button"  class="btn btn-primary editPostBtn">Edit</button>
+                            </div>
+                        {% else %}
+                            <div class="postAuthor">
+                                {{ post.author }}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="postDate">
+                            {{ post.date_time }}
+                        </div>
+                        <div class="postLikes">
+                        <button type="button"> </button> 
+                        {{ post.num_likes }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+    {% endif %}
+
+    
+{% endblock %}

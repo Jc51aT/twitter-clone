@@ -26,6 +26,17 @@ def index(request):
     })
 
 @login_required
+def following(request):
+    users_following         =  [e.following_user_id for e in  User_Following.objects.filter(user_id = request.user.id)] 
+    users_following_posts   = Post.objects.filter(author__in=users_following)
+    
+
+    return render(request, "network/following.html",{
+        "Posts": users_following_posts,
+    })
+
+
+@login_required
 def profile(request):
 
     num_following = len(User_Following.objects.filter(user_id = request.user.id))

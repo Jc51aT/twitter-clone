@@ -7,7 +7,7 @@
             {% csrf_token %}
             <div class="form-group">
                 <label>New Post</label>
-                <input type="textarea" class="form-control" id="newPostInput" aria-describedby="newPostInput" placeholder="Enter New Post" name="post-text">
+                <textarea type="textarea" class="form-control" id="newPostInput" aria-describedby="newPostInput" placeholder="Enter New Post" name="post-text"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Post</button>
         </form>
@@ -24,7 +24,7 @@
                     </div>
                     {% if user == post.author %}
                         <div class="postEdit">
-                            <button>Edit</button>
+                            <button type="button"  class="btn btn-primary editPostBtn">Edit</button>
                         </div>
                     {% else %}
                         <div class="postAuthor">
@@ -36,6 +36,7 @@
                         {{ post.date_time }}
                     </div>
                     <div class="postLikes">
+                       <button type="button"> </button> 
                        {{ post.num_likes }}
                     </div>
                 </div>
