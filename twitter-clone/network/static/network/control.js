@@ -31,6 +31,9 @@ function savePost(){
     })
     .then(response => {
         console.log(response["status"]);
+    })
+    .catch(() => {
+        alert("Error saving post");
     });
     
     

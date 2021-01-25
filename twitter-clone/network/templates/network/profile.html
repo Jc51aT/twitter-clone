@@ -14,12 +14,13 @@
             <div id="postings">
                 <h3>{{ user.username }}'s Posts</h3>
                 {% for post in user_posts %}
-                    <div class="post">
+                    <div class="post" data-postId= {{ post.id }}>
                         <div class="postText">
                             {{ post.text }}
                         </div>
+                        <textarea type="textarea" class="form-control" id="editPostInput"  placeholder="" ></textarea>
                         <div class="postEdit">
-                            <button type="button" class="btn btn-primary editPostBtn">Edit</button>
+                            <button type="button" class="btn btn-primary " id="editPostBtn">Edit</button>
                         </div>
                         <div class="postDate">
                             {{ post.date_time }}
