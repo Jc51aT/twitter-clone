@@ -1,10 +1,12 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone,dateformat
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post, Post_Likes, User_Following
 
@@ -20,10 +22,26 @@ def index(request):
         posting.save()
         return HttpResponseRedirect(reverse("index"))
 
-
+    
     return render(request, "network/index.html",{
         "Posts": Post.objects.all(),
     })
+
+@csrf_exempt
+@login_required
+def update_post(request, post_id):
+
+    post = Post.objects.get(author=request.user, pk=post_id)
+
+    if request.method == 'PUT':
+        data = json.loads(request.body)
+        post.text = data["text"]
+        post.save()
+        return HttpResponse(status=204)
+    else:
+        return JsonResponse({
+            "error": "PUT request required."
+        }, status=400)
 
 @login_required
 def following(request):

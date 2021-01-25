@@ -3,7 +3,7 @@
 {% block body %}
     {% if user.is_authenticated %}
         <div>
-            <h2>{{  user.username  }}</h2> &nbws <button type="button" class="btn btn-primary">Follow</button>
+            <h2>{{  user.username  }}</h2>  <button type="button" class="btn btn-primary">Follow</button>
         </div>
         <div>
             Followers: {{ num_followers }}  Following: {{ num_following }}
