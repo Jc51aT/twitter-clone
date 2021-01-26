@@ -28,8 +28,8 @@
                             <button type="button"  class="btn btn-primary" id="editPostBtn">Edit</button>
                         </div>
                     {% else %}
-                        <div class="postAuthor">
-                            {{ post.author }}
+                        <div class="postAuthor" data-postAuthor= {{ post.author }}>
+                            <a href="{% url 'profile'  post.author  %}">{{ post.author }}</a>
                         </div>
                     {% endif %}
                     

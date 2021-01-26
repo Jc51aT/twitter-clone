@@ -1,11 +1,15 @@
 .postText{
     font: 20px bold Arial, sans-serif;
+    margin-bottom: 1em;
     display: block;
 }
 .post{
     border: 2px solid lightgrey;
     padding: 1em;
     margin-top: 1em;
+}
+.postEdit{
+    margin-bottom: 1em;
 }
 #postings{
     border: 2px solid lightgray;

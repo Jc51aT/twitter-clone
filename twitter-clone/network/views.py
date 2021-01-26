@@ -55,17 +55,27 @@ def following(request):
 
 
 @login_required
-def profile(request):
+def profile(request, username=None):
 
-    num_following = len(User_Following.objects.filter(user_id = request.user.id))
-    num_followers = len( User_Following.objects.filter(following_user_id= request.user.id))
-    user_posts    = Post.objects.filter(author= request.user)
+    if username is not None:
+        user = User.objects.get(username=username)
+        num_following = len(User_Following.objects.filter(user_id = user.id))
+        num_followers = len( User_Following.objects.filter(following_user_id= user.id))
+        user_posts    = Post.objects.filter(author= user)
+        user_name     = user.username
+    else:
+        num_following = len(User_Following.objects.filter(user_id = request.user.id))
+        num_followers = len( User_Following.objects.filter(following_user_id= request.user.id))
+        user_posts    = Post.objects.filter(author= request.user)
+        user_name     = request.user.username
 
     return render(request, "network/profile.html", {
         "num_following": num_following,
         "num_followers": num_followers,
         "user_posts"   : user_posts,
+        "user_name"    : user_name,
     })
+
 
 
 def login_view(request):
