@@ -43,6 +43,28 @@ def update_post(request, post_id):
             "error": "PUT request required."
         }, status=400)
 
+@csrf_exempt
+@login_required
+def follow_user(request):
+
+    data = json.loads(request.body)
+
+    if request.method == 'PUT':
+        follow_user = User_Following()
+        follow_user.user_id = request.user
+        f_user = User.objects.get(pk=data["following_user"])
+        follow_user.following_user_id = f_user
+        follow_user.save()
+        return HttpResponse(status=204)
+    if request.method == 'DELETE':
+        follow_user = User_Following.objects.get(user_id = request.user.id, following_user_id= data["following_user"])
+        follow_user.delete()
+        return HttpResponse(status=204)
+    else:
+        return JsonResponse({
+            "error": "PUT request required."
+        }, status=400)
+
 @login_required
 def following(request):
     users_following         =  [e.following_user_id for e in  User_Following.objects.filter(user_id = request.user.id)] 
@@ -56,24 +78,36 @@ def following(request):
 
 @login_required
 def profile(request, username=None):
+    
+    # if the user requesting the page is different from the users profile page
+    if username != request.user.username:
 
-    if username is not None:
-        user = User.objects.get(username=username)
+        user          = User.objects.get(username=username)
+        followers     = list(User_Following.objects.filter(following_user_id= user.id))
+        filter_followers    = filter(lambda u_f: u_f.user_id == request.user, followers)
         num_following = len(User_Following.objects.filter(user_id = user.id))
         num_followers = len( User_Following.objects.filter(following_user_id= user.id))
         user_posts    = Post.objects.filter(author= user)
         user_name     = user.username
+        user_id       = user.id
+        is_follower   = list(filter_followers)[0].user_id == request.user
     else:
+
         num_following = len(User_Following.objects.filter(user_id = request.user.id))
-        num_followers = len( User_Following.objects.filter(following_user_id= request.user.id))
+        followers     = list(User_Following.objects.filter(following_user_id= request.user.id))
+        num_followers = len( followers )
         user_posts    = Post.objects.filter(author= request.user)
         user_name     = request.user.username
+        user_id       = request.user.id
+        is_follower   = False
 
     return render(request, "network/profile.html", {
         "num_following": num_following,
+        "isFollower"   : is_follower,
         "num_followers": num_followers,
         "user_posts"   : user_posts,
         "user_name"    : user_name,
+        "user_id"      : user_id,
     })
 
 

@@ -47,21 +47,76 @@ function likePost(){
 
 }
 
+function followUser(following){
+    console.log(following);
+    fetch(`followUser/`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            isFollowing: false,
+            following_user: following
+        })
+    })
+    .then(response => {
+        console.log(response["status"]);
+        followBtn.innerHTML = 'Unfollow';
+    })
+    .catch(() => {
+        alert("Error following user.");
+    });
+}
+
+function unfollowUser(following){
+
+    fetch(`followUser/`, {
+        method: 'DELETE',
+        body: JSON.stringify({
+            isFollowing: true,
+            following_user: following
+        })
+    })
+    .then(response => {
+        console.log(response["status"]);
+        followBtn.innerHTML = 'Follow';
+    })
+    .catch(() => {
+        alert("Error following user.");
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const editBtn = document.querySelector('#editPostBtn');
+    const followBtn = document.querySelector('#followUserBtn');
 
-    editBtn.addEventListener('click', () => {
-        
-        const editBtnHTML       = editBtn.innerHTML;
-        let isEditBtnPressed    = true ? editBtnHTML === 'Edit' :  false;
-        
-        if(isEditBtnPressed){
-            editBtn.innerHTML = 'Save';
-            editPost();
-        }else{
-            savePost();
-            editBtn.innerHTML = 'Edit';
-        }
+    if(editBtn){
+        editBtn.addEventListener('click', () => {
+            
+            const editBtnHTML       = editBtn.innerHTML;
+            let isEditBtnPressed    = true ? editBtnHTML === 'Edit' :  false;
+            
+            if(isEditBtnPressed){
+                editBtn.innerHTML = 'Save';
+                editPost();
+            }else{
+                savePost();
+                editBtn.innerHTML = 'Edit';
+            }
 
-    })
+        });
+    }
+
+    if(followBtn){
+        followBtn.addEventListener('click', () => {
+            const followBtnHTML = followBtn.innerHTML;
+            let following     = document.querySelector('#usernameHeading').dataset.userid;
+            
+            let isFollowBtnPressed = true ? followBtnHTML === 'Follow' : false;
+
+            if(isFollowBtnPressed){
+                followUser(following);
+            }else{
+                unfollowUser(following);
+            }
+        });
+    }
+
 });

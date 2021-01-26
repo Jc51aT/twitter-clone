@@ -26,5 +26,5 @@ class User_Following(models.Model):
             models.UniqueConstraint(fields=['user_id','following_user_id'],  name="unique_followers")
         ]
 
-    def __str__(self):
-        f"{self.user_id} follows {self.following_user_id}"
+    #def __str__(self):
+    #    f"{self.user_id} follows {self.following_user_id}"
