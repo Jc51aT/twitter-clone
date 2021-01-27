@@ -36,15 +36,50 @@ function savePost(){
         alert("Error saving post");
     });
     
-    
     postText.innerHTML = newPost;
     editPostText.innerHTML = "";
     postText.style.display = "block";
     editPostText.style.display = "none";
 }
 
-function likePost(){
+function likePost(post_id){
+    fetch(`likePost/${post_id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            post_id: post_id
+        })
+    })
+    .then(response => {
+        console.log(response["status"]);
+        const likeBtn = document.querySelector('#likeBtn');
+        likeBtn.className = "bi bi-heart-fill";
+        let numLikes = parseInt(likeBtn.parentElement.innerText);
+        numLikes++;
+        likeBtn.innerText = numLikes;
+    })
+    .catch(error => {
+        alert("Error liking post.");
+    });
+}
 
+function unlikePost(post_id){
+    fetch(`likePost/${post_id}`, {
+        method: 'DELETE',
+        body: JSON.stringify({
+            post_id: post_id
+        })
+    })
+    .then(response => {
+        console.log(response["status"]);
+        const likeBtn = document.querySelector('#likeBtn');
+        let numLikes = parseInt(likeBtn.parentElement.innerText);
+        likeBtn.className = "bi bi-heart";
+        numLikes--;
+        likeBtn.innerText = numLikes;
+    })
+    .catch(error => {
+        alert("Error liking post.");
+    });
 }
 
 function followUser(following){
@@ -58,9 +93,10 @@ function followUser(following){
     })
     .then(response => {
         console.log(response["status"]);
+        const followBtn = document.querySelector('#followUserBtn');
         followBtn.innerHTML = 'Unfollow';
     })
-    .catch(() => {
+    .catch(error => {
         alert("Error following user.");
     });
 }
@@ -76,9 +112,10 @@ function unfollowUser(following){
     })
     .then(response => {
         console.log(response["status"]);
+        const followBtn = document.querySelector('#followUserBtn');
         followBtn.innerHTML = 'Follow';
     })
-    .catch(() => {
+    .catch(error => {
         alert("Error following user.");
     });
 }
@@ -86,10 +123,10 @@ function unfollowUser(following){
 document.addEventListener('DOMContentLoaded', function() {
     const editBtn = document.querySelector('#editPostBtn');
     const followBtn = document.querySelector('#followUserBtn');
+    const likeBtn = document.querySelector('#likeBtn');
 
     if(editBtn){
         editBtn.addEventListener('click', () => {
-            
             const editBtnHTML       = editBtn.innerHTML;
             let isEditBtnPressed    = true ? editBtnHTML === 'Edit' :  false;
             
@@ -108,7 +145,6 @@ document.addEventListener('DOMContentLoaded', function() {
         followBtn.addEventListener('click', () => {
             const followBtnHTML = followBtn.innerHTML;
             let following     = document.querySelector('#usernameHeading').dataset.userid;
-            
             let isFollowBtnPressed = true ? followBtnHTML === 'Follow' : false;
 
             if(isFollowBtnPressed){
@@ -117,6 +153,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 unfollowUser(following);
             }
         });
+    }
+
+    if(likeBtn){
+        likeBtn.addEventListener('click', () => {
+            const postLikeDiv = likeBtn.parentElement;
+            const post        = postLikeDiv.parentElement;
+            const postId = parseInt(post.dataset.postid);
+            
+            
+            if(likeBtn.classList.contains('bi-heart-fill')){
+                unlikePost(postId);
+            }else{
+                likePost(postId);
+            }
+        })
     }
 
 });

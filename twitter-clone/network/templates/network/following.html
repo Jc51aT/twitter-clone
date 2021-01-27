@@ -8,7 +8,7 @@
         {% if Posts %}
             <div id="postings">
                 {% for post in Posts %}
-                    <div class="post">
+                    <div class="post" data-postId= {{ post.id }}>
                         <div class="postText">
                             {{ post.text }}
                         </div>
@@ -26,8 +26,11 @@
                             {{ post.date_time }}
                         </div>
                         <div class="postLikes">
-                        <button type="button"> </button> 
-                        {{ post.num_likes }}
+                            {% if post in user_liked %}
+                                <i class="bi bi-heart-fill" id="likeBtn">{{ post.num_likes }}</i> 
+                            {% else %}
+                                <i class="bi bi-heart" id="likeBtn">{{ post.num_likes }}</i> 
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}

@@ -37,8 +37,15 @@
                         {{ post.date_time }}
                     </div>
                     <div class="postLikes">
-                       <button type="button"> </button> 
-                       {{ post.num_likes }}
+                        {% if user == post.author %}
+                            <i class="bi bi-heart-fill">{{ post.num_likes }}</i> 
+                        {% else %}
+                            {% if post in Posts_liked %}
+                                <i class="bi bi-heart-fill" id="likeBtn">{{ post.num_likes }}</i> 
+                            {% else %}
+                                <i class="bi bi-heart" id="likeBtn">{{ post.num_likes }}</i> 
+                            {% endif %}
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}

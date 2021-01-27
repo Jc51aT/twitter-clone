@@ -5,7 +5,7 @@
         <div>
             <h2 id="usernameHeading" data-userid= {{ user_id }}>{{  user_name  }}</h2>  
             {% if user.username != user_name %}
-                {% if user in followers %}
+                {% if isFollower %}
                     <button type="button" class="btn btn-primary" id="followUserBtn">Unfollow</button>
                 {% else %}
                     <button type="button" class="btn btn-primary" id="followUserBtn">Follow</button>
@@ -35,7 +35,15 @@
                             {{ post.date_time }}
                         </div>
                         <div class="postLikes">
-                        {{ post.num_likes }}
+                            {% if user == post.author %}
+                                <i class="bi bi-heart-fill">{{ post.num_likes }}</i> 
+                            {% else %}
+                                {% if post in Posts_liked %}
+                                    <i class="bi bi-heart-fill" id="likeBtn">{{ post.num_likes }}</i> 
+                                {% else %}
+                                    <i class="bi bi-heart" id="likeBtn">{{ post.num_likes }}</i> 
+                                {% endif %}
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}

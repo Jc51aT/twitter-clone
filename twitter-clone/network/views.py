@@ -7,14 +7,15 @@ from django.urls import reverse
 from django.utils import timezone,dateformat
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-
+from django.core.exceptions import ObjectDoesNotExist
 from .models import User, Post, Post_Likes, User_Following
 
   
 def index(request):
-    posting = Post()
+    
 
     if request.method == "POST":
+        posting = Post()
         posting.text = request.POST["post-text"]
         posting.date_time = timezone.now()
         posting.num_likes = 0
@@ -22,10 +23,41 @@ def index(request):
         posting.save()
         return HttpResponseRedirect(reverse("index"))
 
+    posts               = Post.objects.all()
+    user_liked_posts    = []
+
+    if request.user.is_authenticated:
+        user_likes          = Post_Likes.objects.filter(user_liked=request.user).select_related('post_id')
+        user_liked_posts    = [post.post_id for post in user_likes]
     
     return render(request, "network/index.html",{
-        "Posts": Post.objects.all(),
+        "Posts": posts,
+        "Posts_liked": user_liked_posts
     })
+
+@csrf_exempt
+@login_required
+def like_post(request, post_id):
+
+    post = Post.objects.get(pk=post_id)
+
+    if request.method == "PUT":
+        newLike = Post_Likes(post_id=post, user_liked=request.user)
+        post.num_likes += 1
+        newLike.save()
+        post.save()
+        return HttpResponse(status=204)
+    elif request.method == "DELETE":
+        like = Post_Likes.objects.get(post_id=post, user_liked=request.user)
+        like.delete()
+        post.num_likes -= 1
+        post.save()
+        return HttpResponse(status=204)
+    else:
+        return JsonResponse({
+            "error": "PUT or DELETE request required."
+        }, status=400)
+
 
 @csrf_exempt
 @login_required
@@ -78,19 +110,29 @@ def following(request):
 
 @login_required
 def profile(request, username=None):
-    
+    user_liked_posts = []
     # if the user requesting the page is different from the users profile page
     if username != request.user.username:
 
         user          = User.objects.get(username=username)
-        followers     = list(User_Following.objects.filter(following_user_id= user.id))
-        filter_followers    = filter(lambda u_f: u_f.user_id == request.user, followers)
+        try:
+            followers     = User_Following.objects.get(user_id = request.user, following_user_id= user.id)
+            is_follower   = True
+            user_likes  = Post_Likes.objects.filter(user_liked=request.user).select_related('post_id')
+            user_liked_posts = [post.post_id for post in user_likes]
+        except User_Following.DoesNotExist:
+            print(User_Following.DoesNotExist)
+            is_follower   = False
+        except Post_Likes.DoesNotExist:
+            print(Post_Likes.DoesNotExist)
+
+        #filter_followers    = filter(lambda u_f: u_f.user_id == request.user, followers)
         num_following = len(User_Following.objects.filter(user_id = user.id))
         num_followers = len( User_Following.objects.filter(following_user_id= user.id))
         user_posts    = Post.objects.filter(author= user)
         user_name     = user.username
         user_id       = user.id
-        is_follower   = list(filter_followers)[0].user_id == request.user
+        
     else:
 
         num_following = len(User_Following.objects.filter(user_id = request.user.id))
@@ -108,6 +150,7 @@ def profile(request, username=None):
         "user_posts"   : user_posts,
         "user_name"    : user_name,
         "user_id"      : user_id,
+        "Posts_liked": user_liked_posts,
     })
 
 
