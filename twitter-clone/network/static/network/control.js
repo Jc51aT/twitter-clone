@@ -1,10 +1,10 @@
 
-function editPost(){
+function editPost(Event){
     //clear post text and set to empty text area
-    const postEditDiv = document.querySelector('#editPostBtn').parentElement;
+    const postEditDiv = Event.target.parentElement;
     const postText = postEditDiv.parentElement.querySelector('.postText');
     const editPostText = postEditDiv.parentElement.querySelector('#editPostInput');
-    console.log(editPostText);
+    
 
     const currentPost = postText.innerHTML.trim();
 
@@ -14,8 +14,8 @@ function editPost(){
     editPostText.innerHTML = currentPost;
 }
 
-function savePost(){
-    const postEditDiv = document.querySelector('#editPostBtn').parentElement;
+function savePost(Event){
+    const postEditDiv = Event.target.parentElement;
     const post = postEditDiv.parentElement;
     const postId = parseInt(post.dataset.postid);
     const postText = postEditDiv.parentElement.querySelector('.postText');
@@ -42,7 +42,7 @@ function savePost(){
     editPostText.style.display = "none";
 }
 
-function likePost(post_id){
+function likePost(Event, post_id){
     fetch(`likePost/${post_id}`, {
         method: 'PUT',
         body: JSON.stringify({
@@ -51,7 +51,7 @@ function likePost(post_id){
     })
     .then(response => {
         console.log(response["status"]);
-        const likeBtn = document.querySelector('#likeBtn');
+        const likeBtn = Event.target;
         likeBtn.className = "bi bi-heart-fill";
         let numLikes = parseInt(likeBtn.parentElement.innerText);
         numLikes++;
@@ -62,7 +62,7 @@ function likePost(post_id){
     });
 }
 
-function unlikePost(post_id){
+function unlikePost(Event, post_id){
     fetch(`likePost/${post_id}`, {
         method: 'DELETE',
         body: JSON.stringify({
@@ -71,7 +71,7 @@ function unlikePost(post_id){
     })
     .then(response => {
         console.log(response["status"]);
-        const likeBtn = document.querySelector('#likeBtn');
+        const likeBtn = Event.target;
         let numLikes = parseInt(likeBtn.parentElement.innerText);
         likeBtn.className = "bi bi-heart";
         numLikes--;
@@ -82,8 +82,8 @@ function unlikePost(post_id){
     });
 }
 
-function followUser(following){
-    console.log(following);
+function followUser(Event, following){
+    console.log(Event.target);
     fetch(`followUser/`, {
         method: 'PUT',
         body: JSON.stringify({
@@ -101,7 +101,7 @@ function followUser(following){
     });
 }
 
-function unfollowUser(following){
+function unfollowUser(Event, following){
 
     fetch(`followUser/`, {
         method: 'DELETE',
@@ -121,53 +121,58 @@ function unfollowUser(following){
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    const editBtn = document.querySelector('#editPostBtn');
+    const editBtn = document.querySelectorAll('#editPostBtn');
     const followBtn = document.querySelector('#followUserBtn');
-    const likeBtn = document.querySelector('#likeBtn');
+    const likeBtn = document.querySelectorAll('#likeBtn');
 
-    if(editBtn){
-        editBtn.addEventListener('click', () => {
-            const editBtnHTML       = editBtn.innerHTML;
-            let isEditBtnPressed    = true ? editBtnHTML === 'Edit' :  false;
-            
-            if(isEditBtnPressed){
-                editBtn.innerHTML = 'Save';
-                editPost();
-            }else{
-                savePost();
-                editBtn.innerHTML = 'Edit';
-            }
-
-        });
+    if(editBtn.length > 0){
+        editBtn.forEach(eBtn => {
+            eBtn.addEventListener('click', (Event) => {
+                const editBtnHTML       = eBtn.innerHTML;
+                let isEditBtnPressed    = true ? editBtnHTML === 'Edit' :  false;
+                
+                if(isEditBtnPressed){
+                    eBtn.innerHTML = 'Save';
+                    editPost(Event);
+                }else{
+                    savePost(Event);
+                    eBtn.innerHTML = 'Edit';
+                }
+            });
+        })
     }
 
     if(followBtn){
-        followBtn.addEventListener('click', () => {
+
+        followBtn.addEventListener('click', (Event) => {
             const followBtnHTML = followBtn.innerHTML;
             let following     = document.querySelector('#usernameHeading').dataset.userid;
             let isFollowBtnPressed = true ? followBtnHTML === 'Follow' : false;
 
             if(isFollowBtnPressed){
-                followUser(following);
+                followUser(Event, following);
             }else{
-                unfollowUser(following);
+                unfollowUser(Event, following);
             }
         });
     }
 
-    if(likeBtn){
-        likeBtn.addEventListener('click', () => {
-            const postLikeDiv = likeBtn.parentElement;
-            const post        = postLikeDiv.parentElement;
-            const postId = parseInt(post.dataset.postid);
-            
-            
-            if(likeBtn.classList.contains('bi-heart-fill')){
-                unlikePost(postId);
-            }else{
-                likePost(postId);
-            }
-        })
+    if(likeBtn.length > 0){
+        likeBtn.forEach(lkBtn => {
+            lkBtn.addEventListener('click', (Event) => {
+                const postLikeDiv = lkBtn.parentElement;
+                const post        = postLikeDiv.parentElement;
+                const postId = parseInt(post.dataset.postid);
+                
+                
+                if(lkBtn.classList.contains('bi-heart-fill')){
+                    unlikePost(Event, postId);
+                }else{
+                    likePost(Event, postId);
+                }
+            });
+        });
+        
     }
 
 });

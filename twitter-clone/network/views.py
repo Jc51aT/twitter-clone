@@ -94,7 +94,7 @@ def follow_user(request):
         follow_user.save()
         return HttpResponse(status=204)
     if request.method == 'DELETE':
-        follow_user = User_Following.objects.get(user_id = request.user.id, following_user_id= data["following_user"])
+        follow_user = User_Following.objects.get(user_id = request.user, following_user_id= data["following_user"])
         follow_user.delete()
         return HttpResponse(status=204)
     else:
