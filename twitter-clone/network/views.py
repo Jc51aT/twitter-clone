@@ -8,6 +8,7 @@ from django.utils import timezone,dateformat
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator
 from .models import User, Post, Post_Likes, User_Following
 
   
@@ -25,6 +26,9 @@ def index(request):
 
     posts               = Post.objects.all()
     user_liked_posts    = []
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     if request.user.is_authenticated:
         user_likes          = Post_Likes.objects.filter(user_liked=request.user).select_related('post_id')
@@ -32,7 +36,8 @@ def index(request):
     
     return render(request, "network/index.html",{
         "Posts": posts,
-        "Posts_liked": user_liked_posts
+        "Posts_liked": user_liked_posts,
+        "page_obj": page_obj
     })
 
 @csrf_exempt
@@ -101,10 +106,13 @@ def follow_user(request):
 def following(request):
     users_following         =  [e.following_user_id for e in  User_Following.objects.filter(user_id = request.user.id)] 
     users_following_posts   = Post.objects.filter(author__in=users_following)
-    
+    paginator = Paginator(users_following_posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     return render(request, "network/following.html",{
         "Posts": users_following_posts,
+        "page_obj": page_obj
     })
 
 
@@ -126,7 +134,7 @@ def profile(request, username=None):
         except Post_Likes.DoesNotExist:
             print(Post_Likes.DoesNotExist)
 
-        #filter_followers    = filter(lambda u_f: u_f.user_id == request.user, followers)
+        
         num_following = len(User_Following.objects.filter(user_id = user.id))
         num_followers = len( User_Following.objects.filter(following_user_id= user.id))
         user_posts    = Post.objects.filter(author= user)
@@ -142,6 +150,10 @@ def profile(request, username=None):
         user_name     = request.user.username
         user_id       = request.user.id
         is_follower   = False
+    
+    paginator = Paginator(user_posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     return render(request, "network/profile.html", {
         "num_following": num_following,
@@ -151,6 +163,7 @@ def profile(request, username=None):
         "user_name"    : user_name,
         "user_id"      : user_id,
         "Posts_liked": user_liked_posts,
+        "page_obj": page_obj
     })
 
 
