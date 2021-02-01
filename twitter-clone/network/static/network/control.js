@@ -82,8 +82,7 @@ function unlikePost(Event, post_id){
     });
 }
 
-function followUser(Event, following){
-    console.log(Event.target);
+function followUser(following){
     fetch(`followUser/`, {
         method: 'PUT',
         body: JSON.stringify({
@@ -101,7 +100,7 @@ function followUser(Event, following){
     });
 }
 
-function unfollowUser(Event, following){
+function unfollowUser( following){
 
     fetch(`followUser/`, {
         method: 'DELETE',

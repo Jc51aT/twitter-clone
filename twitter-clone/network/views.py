@@ -24,14 +24,14 @@ def index(request):
         posting.save()
         return HttpResponseRedirect(reverse("index"))
 
-    posts               = Post.objects.all()
+    posts               = Post.objects.all().order_by("date_time").reverse()
     user_liked_posts    = []
     paginator = Paginator(posts, 10)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
     if request.user.is_authenticated:
-        user_likes          = Post_Likes.objects.filter(user_liked=request.user).select_related('post_id')
+        user_likes          = Post_Likes.objects.filter(user_liked=request.user).select_related("post_id")
         user_liked_posts    = [post.post_id for post in user_likes]
     
     return render(request, "network/index.html",{
@@ -105,7 +105,7 @@ def follow_user(request):
 @login_required
 def following(request):
     users_following         =  [e.following_user_id for e in  User_Following.objects.filter(user_id = request.user.id)] 
-    users_following_posts   = Post.objects.filter(author__in=users_following)
+    users_following_posts   = Post.objects.filter(author__in=users_following).order_by("date_time").reverse()
     paginator = Paginator(users_following_posts, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -137,7 +137,7 @@ def profile(request, username=None):
         
         num_following = len(User_Following.objects.filter(user_id = user.id))
         num_followers = len( User_Following.objects.filter(following_user_id= user.id))
-        user_posts    = Post.objects.filter(author= user)
+        user_posts    = Post.objects.filter(author= user).order_by("date_time").reverse()
         user_name     = user.username
         user_id       = user.id
         
@@ -146,7 +146,7 @@ def profile(request, username=None):
         num_following = len(User_Following.objects.filter(user_id = request.user.id))
         followers     = list(User_Following.objects.filter(following_user_id= request.user.id))
         num_followers = len( followers )
-        user_posts    = Post.objects.filter(author= request.user)
+        user_posts    = Post.objects.filter(author= request.user).order_by("date_time").reverse()
         user_name     = request.user.username
         user_id       = request.user.id
         is_follower   = False
